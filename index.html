@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A grid-based laser decryption puzzle where you rotate mirrors to route colored light through unstable Solstice Drift systems. Built for the June Solstice Game Jam.">
+  <title>Solstice Crypt // Decrypting Turing</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Include Outfit Font for modern retro-futuristic styling -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+  <noscript>
+    <div style="background-color: #060913; color: #ff3366; font-family: monospace; text-align: center; padding: 50px; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+      <h1 style="margin-bottom: 20px; border-bottom: 2px solid #ff3366; padding-bottom: 10px;">JAVASCRIPT REQUIRED</h1>
+      <p style="max-width: 600px; line-height: 1.6; color: #e2e8f0;">Solstice Crypt is a real-time optical decryption game that relies on JavaScript to compute light paths, simulate lasers, and run the procedural audio engine. Please enable JavaScript in your browser to play.</p>
+    </div>
+  </noscript>
+  <div class="terminal-container">
+    <header class="terminal-header">
+      <div class="header-status">
+        <span class="status-indicator online"></span>
+        <span class="status-text">DECRYPT_CORE // ALAN_TURING_IMPRINTS</span>
+      </div>
+      <div class="header-title">SOLSTICE CRYPT v1.0.0</div>
+      <div class="header-date" id="sys-date">SYS_DATE: ----.--.--</div>
+    </header>
+
+    <div class="main-layout">
+      <!-- Sidebar / Narrative Console -->
+      <aside class="sidebar">
+        <div class="panel-section console-panel" id="console-panel">
+          <div class="panel-header">
+            <span class="panel-icon">⏵</span>
+            <span>SYSTEM CONSOLE</span>
+          </div>
+          <div class="panel-body">
+            <div id="narrative-log" class="narrative-log">
+              <!-- Dynamically populated by game.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Editor Panel (hidden by default) -->
+        <div class="panel-section editor-panel" id="editor-panel" style="display: none; border-bottom: 1px solid var(--border-color); flex: 1; min-height: 0;">
+          <div class="panel-header">
+            <span class="panel-icon">🛠</span>
+            <span>CREATIVE LAB UTILS</span>
+          </div>
+          <div class="panel-body editor-controls" style="display: flex; flex-direction: column; gap: 8px; padding: 12px; overflow-y: auto; min-height: 0; flex: 1;">
+            <!-- Creative Lab Quick-Start Guide -->
+            <details class="lab-guide" id="lab-guide">
+              <summary class="lab-guide-summary">📖 HOW TO USE THE CREATIVE LAB</summary>
+              <div class="lab-guide-body">
+                <p class="lab-guide-intro">Design your own optical puzzles and share them with other cryptanalysts!</p>
+                
+                <div class="lab-guide-section">
+                  <strong>⚡ Quick Start</strong>
+                  <ol>
+                    <li>Select an <em>Element</em> from the dropdown below (e.g., Mirror, Emitter).</li>
+                    <li>Set its <em>Color</em>, <em>Direction</em>, and properties as needed.</li>
+                    <li>Click any grid tile to place the element.</li>
+                    <li>Toggle <strong>MODE: PLAY</strong> to test your puzzle live.</li>
+                    <li>Copy the <strong>SHARE CODE</strong> to send your puzzle to friends!</li>
+                  </ol>
+                </div>
+
+                <div class="lab-guide-section">
+                  <strong>🧩 Element Reference</strong>
+                  <table class="lab-ref-table">
+                    <tr><td>💡 Emitter</td><td>Shoots a light beam in the chosen direction &amp; color.</td></tr>
+                    <tr><td>🪞 Mirror</td><td>Reflects beams 90°. Mark as <em>Rotatable</em> for player interaction.</td></tr>
+                    <tr><td>🔺 Splitter</td><td>Splits white light into Red, Green &amp; Blue components.</td></tr>
+                    <tr><td>🎯 Receiver</td><td>The goal! Set a target color the player must deliver.</td></tr>
+                    <tr><td>🟫 Wall</td><td>Blocks all light. Use for maze boundaries.</td></tr>
+                    <tr><td>🌀 Portal</td><td>Teleports beams between paired portals (same channel).</td></tr>
+                    <tr><td>🔬 Filter</td><td>Only passes the matching color wavelength. Absorbs the rest.</td></tr>
+                  </table>
+                </div>
+
+                <div class="lab-guide-section">
+                  <strong>🔗 Sharing &amp; Importing</strong>
+                  <p>Your level auto-generates a <em>Base64 share code</em> in the SHARE CODE box. Copy it and share! To load someone else's puzzle, paste the code and click <strong>IMPORT CODE</strong>.</p>
+                </div>
+                
+                <div class="lab-guide-section">
+                  <strong>🧪 Demo Puzzle — "Quantum Gateway"</strong>
+                  <p>Try this sample puzzle! A white emitter feeds light through a <strong style="color:#ffff33;">Yellow Filter</strong>. Route the filtered light into the <strong style="color:#00ffff;">Alpha Portal</strong>, teleporting it across the grid to the <strong style="color:#ffff33;">Yellow Receiver</strong>. Rotate the two mirrors to line up the path!</p>
+                  <textarea class="terminal-textarea lab-demo-code" readonly rows="3" id="lab-demo-code" aria-label="Demo puzzle share code">eyJuYW1lIjoiUXVhbnR1bSBHYXRld2F5IiwicXVvdGUiOiJERU1PIFBVWlpMRTogUGFzcyB3aGl0ZSBsaWdodCB0aHJvdWdoIGEgWWVsbG93IGZpbHRlciwgdGhlbiByb3V0ZSBpdCBpbnRvIHRoZSBBbHBoYSBwb3J0YWwgdG8gdGVsZXBvcnQgaXQgYWNyb3NzIHRoZSBncmlkIHRvIHRoZSByZWNlaXZlci4iLCJncmlkU2l6ZSI6NiwiZHJpZnREdXJhdGlvbiI6MCwiZ3JpZCI6W3sieCI6MCwieSI6MCwidHlwZSI6ImVtaXR0ZXIiLCJhbmdsZSI6MCwicm90YXRhYmxlIjpmYWxzZSwiZHJpZnRhYmxlIjpmYWxzZSwiY29sb3IiOjcsImRpciI6IlJJR0hUIiwicG9ydGFsSWQiOjF9LHsieCI6MiwieSI6MCwidHlwZSI6ImZpbHRlciIsImFuZ2xlIjowLCJyb3RhdGFibGUiOmZhbHNlLCJkcmlmdGFibGUiOmZhbHNlLCJjb2xvciI6MywiZGlyIjpudWxsLCJwb3J0YWxJZCI6MX0seyJ4Ijo0LCJ5IjowLCJ0eXBlIjoibWlycm9yIiwiYW5nbGUiOjAsInJvdGF0YWJsZSI6dHJ1ZSwiZHJpZnRhYmxlIjpmYWxzZSwiY29sb3IiOjAsImRpciI6bnVsbCwicG9ydGFsSWQiOjF9LHsieCI6NCwieSI6MiwidHlwZSI6InBvcnRhbCIsImFuZ2xlIjowLCJyb3RhdGFibGUiOmZhbHNlLCJkcmlmdGFibGUiOmZhbHNlLCJjb2xvciI6MCwiZGlyIjpudWxsLCJwb3J0YWxJZCI6MX0seyJ4IjoxLCJ5Ijo0LCJ0eXBlIjoicG9ydGFsIiwiYW5nbGUiOjAsInJvdGF0YWJsZSI6ZmFsc2UsImRyaWZ0YWJsZSI6ZmFsc2UsImNvbG9yIjowLCJkaXIiOm51bGwsInBvcnRhbElkIjoxfSx7IngiOjEsInkiOjUsInR5cGUiOiJtaXJyb3IiLCJhbmdsZSI6MCwicm90YXRhYmxlIjp0cnVlLCJkcmlmdGFibGUiOmZhbHNlLCJjb2xvciI6MCwiZGlyIjpudWxsLCJwb3J0YWxJZCI6MX0seyJ4Ijo1LCJ5Ijo1LCJ0eXBlIjoicmVjZWl2ZXIiLCJhbmdsZSI6MCwicm90YXRhYmxlIjpmYWxzZSwiZHJpZnRhYmxlIjpmYWxzZSwiY29sb3IiOjMsImRpciI6bnVsbCwicG9ydGFsSWQiOjF9XX0=</textarea>
+                  <button id="btn-load-demo" class="terminal-btn btn-primary" style="margin-top: 4px; font-size: 0.72rem;" aria-label="Load demo puzzle into Creative Lab">▶ LOAD DEMO PUZZLE</button>
+                </div>
+              </div>
+            </details>
+            
+            <div class="control-row">
+              <label for="editor-grid-size">GRID SIZE</label>
+              <select id="editor-grid-size" class="terminal-select" aria-label="Select custom grid size">
+                <option value="4">4 × 4</option>
+                <option value="5">5 × 5</option>
+                <option value="6" selected>6 × 6</option>
+                <option value="7">7 × 7</option>
+                <option value="8">8 × 8</option>
+              </select>
+            </div>
+
+            <div class="control-row">
+              <label for="editor-item">ELEMENT</label>
+              <select id="editor-item" class="terminal-select" aria-label="Select placement element type">
+                <option value="empty">Empty Space</option>
+                <option value="wall">Wall Obstacle</option>
+                <option value="mirror">Mirror</option>
+                <option value="splitter">Splitter / Prism</option>
+                <option value="emitter">Light Emitter</option>
+                <option value="receiver">Receiver Target</option>
+                <option value="filter">Wavelength Filter</option>
+                <option value="portal">Optic Portal</option>
+              </select>
+            </div>
+            
+            <div class="control-row" id="editor-color-row" style="display: none;">
+              <label for="editor-color">COLOR</label>
+              <select id="editor-color" class="terminal-select" aria-label="Select placement element color">
+                <option value="7">White</option>
+                <option value="1">Red</option>
+                <option value="2">Green</option>
+                <option value="4">Blue</option>
+                <option value="3">Yellow</option>
+                <option value="5">Magenta</option>
+                <option value="6">Cyan</option>
+              </select>
+            </div>
+
+            <div class="control-row" id="editor-dir-row" style="display: none;">
+              <label for="editor-dir">DIRECTION / ANGLE</label>
+              <select id="editor-dir" class="terminal-select" aria-label="Select placement element direction or orientation">
+                <option value="RIGHT">Right (East) / / Mirror</option>
+                <option value="DOWN">Down (South) / \ Mirror</option>
+                <option value="LEFT">Left (West)</option>
+                <option value="UP">Up (North)</option>
+              </select>
+            </div>
+
+            <div class="checkbox-row" style="display: none;" id="editor-checkbox-row">
+              <label class="terminal-checkbox-container">
+                <input type="checkbox" id="editor-rotatable" checked aria-label="Mark element as rotatable by player">
+                ROTATABLE
+              </label>
+              <label class="terminal-checkbox-container">
+                <input type="checkbox" id="editor-driftable" aria-label="Mark element as affected by Solstice Drift">
+                DRIFTABLE
+              </label>
+            </div>
+            
+            <div class="control-row" id="editor-portal-row" style="display: none;">
+              <label for="editor-portal-id">PORTAL CHANNEL</label>
+              <select id="editor-portal-id" class="terminal-select" aria-label="Select portal channel frequency">
+                <option value="1">Alpha (1)</option>
+                <option value="2">Beta (2)</option>
+                <option value="3">Gamma (3)</option>
+              </select>
+            </div>
+
+            <div class="button-row">
+              <button id="btn-edit-mode" class="terminal-btn btn-primary" aria-label="Toggle editor mode between Design and Play">MODE: DESIGN</button>
+              <button id="btn-clear-grid" class="terminal-btn btn-danger" aria-label="Clear all elements from custom grid">CLEAR</button>
+            </div>
+
+            <div class="control-row" style="margin-top: 6px;">
+              <label for="custom-code-io" style="display: flex; justify-content: space-between; width: 100%;">
+                <span>🖨️ SHARE CODE</span>
+                <span id="copy-status" style="color: var(--neon-yellow); font-size: 0.7rem; display: none; text-shadow: 0 0 5px rgba(255,255,0,0.5); font-weight: bold;">[COPIED!]</span>
+              </label>
+              <textarea id="custom-code-io" class="terminal-textarea" placeholder="Paste share code to import or place tiles to generate..." style="height: 65px; font-size: 0.7rem; line-height: 1.3; word-break: break-all;" title="Share code auto-generates when you place tiles" aria-label="Custom level share code input and output"></textarea>
+            </div>
+            
+            <div class="button-row" style="gap: 6px; margin-top: 4px;">
+              <button id="btn-copy-code" class="terminal-btn btn-primary" style="flex: 1;" aria-label="Copy level share code to clipboard">📋 COPY CODE</button>
+              <button id="btn-import-code" class="terminal-btn btn-success" style="flex: 1;" aria-label="Import level from share code">📥 IMPORT CODE</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section control-panel">
+          <div class="panel-header">
+            <span class="panel-icon">⚙</span>
+            <span>GRID CONTROLS</span>
+          </div>
+          <div class="panel-body controls-grid">
+            <div class="control-row">
+              <label for="level-select">SECTOR</label>
+              <select id="level-select" class="terminal-select" aria-label="Select level sector to load">
+                <option value="0">01 // Solstice Dawn</option>
+                <option value="1">02 // Turing's Prism</option>
+                <option value="2">03 // Pride Synthesis</option>
+                <option value="3">04 // Solstice Drift</option>
+                <option value="4">05 // Crypt-Breaker</option>
+                <option value="5">06 // Quantum Tunnel</option>
+                <option value="6">07 // Spectral Sieve</option>
+                <option value="7">08 // The Grand Solstice</option>
+                <option value="custom">🛠 // Creative Lab</option>
+              </select>
+            </div>
+            
+            <div class="button-row" style="flex-wrap: wrap; gap: 6px;">
+              <button id="btn-reset" class="terminal-btn btn-danger" style="flex: 1 1 100%;" aria-label="Reset current level systems to starting state">RESET SYSTEM</button>
+              <button id="btn-sound" class="terminal-btn" style="flex: 1 1 45%;" aria-label="Toggle game sound effects mute state">MUTE SFX</button>
+              <button id="btn-music" class="terminal-btn" style="flex: 1 1 45%;" aria-label="Toggle ambient music mute state">MUTE MUSIC</button>
+            </div>
+
+            <div class="drift-warning-box idled" id="drift-warning">
+              <div class="drift-header">DRIFT STATE INACTIVE</div>
+              <div class="drift-progress-bar">
+                <div class="drift-progress-fill" id="drift-progress-fill"></div>
+              </div>
+              <div class="drift-time-text" id="drift-time-text">STABLE</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Game Area -->
+      <main class="game-area">
+        <div class="canvas-wrapper">
+          <canvas id="game-canvas" width="640" height="640"></canvas>
+          
+          <!-- Win Overlay Screen -->
+          <div class="overlay" id="win-overlay">
+            <div class="overlay-content">
+              <h2 class="rainbow-text">SECTOR DECRYPTED</h2>
+              <p>Optic pathways stabilized. Rainbow feedback loops active.</p>
+              <div class="button-row" style="flex-direction: column; gap: 8px;">
+                <button id="btn-next-level" class="terminal-btn btn-success" aria-label="Proceed to the next sector level">PROCEED TO NEXT SECTOR</button>
+                <button id="btn-back-to-editor" class="terminal-btn btn-primary" style="display: none;" aria-label="Return to Creative Lab level designer">BACK TO EDITOR</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Start Overlay Screen -->
+          <div class="overlay active" id="start-overlay">
+            <div class="overlay-content">
+              <h1>SOLSTICE CRYPT</h1>
+              <p class="subtitle">Decryption via Optical Redirection</p>
+              <div class="game-intro-text">
+                Rotate mirrors and prisms on the grid to align optical beams.
+                Split white light into Red, Green, and Blue, and synthesize new colors to hit the target receptors.
+                Beware the <strong>Solstice Drift</strong>: some mirror nodes will drift out of alignment!
+              </div>
+              <button id="btn-start-game" class="terminal-btn btn-primary" aria-label="Initialize systems and start game">INITIALIZE SYSTEMS</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <footer class="terminal-footer">
+      <div class="footer-segment">INSTRUCTION: CLICK TILE TO ROTATE CLOCKWISE // VERB: ROTATE</div>
+      <div class="footer-segment text-right">GOOGLE AI & ANTIGRAVITY ENGINE POWERED</div>
+    </footer>
+  </div>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solstice Crypt - Trailer</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #060913;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .trailer-container {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .scene {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    .scene.active {
+      display: flex;
+    }
+
+    /* Hook Scene */
+    .hook-scene {
+      background: #060913;
+    }
+
+    .neon-grid {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: 
+        linear-gradient(rgba(255, 51, 102, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 51, 102, 0.1) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0;
+      animation: gridFadeIn 2s ease-in forwards;
+    }
+
+    @keyframes gridFadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    .countdown-warning {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 4rem;
+      color: #ff6600;
+      text-shadow: 0 0 20px #ff6600, 0 0 40px #ff6600;
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.7; transform: translate(-50%, -50%) scale(1.1); }
+    }
+
+    .typewriter-text {
+      position: absolute;
+      bottom: 30%;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.5rem;
+      color: #ff3366;
+      text-shadow: 0 0 10px #ff3366;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+
+    .text-overlay {
+      position: absolute;
+      bottom: 15%;
+      font-size: 2.5rem;
+      color: #e2e8f0;
+      text-shadow: 0 0 20px rgba(255, 51, 102, 0.8);
+      text-align: center;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Game Canvas Scene */
+    .game-scene {
+      background: #060913;
+    }
+
+    .game-canvas-wrapper {
+      position: relative;
+      width: 640px;
+      height: 640px;
+    }
+
+    .game-canvas-wrapper canvas {
+      border: 2px solid #ff3366;
+      box-shadow: 0 0 30px rgba(255, 51, 102, 0.5);
+    }
+
+    .scene-text {
+      position: absolute;
+      bottom: 10%;
+      font-size: 3rem;
+      color: #e2e8f0;
+      text-shadow: 0 0 20px rgba(255, 51, 102, 0.8);
+      text-align: center;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    /* Final Scene */
+    .final-scene {
+      background: #060913;
+    }
+
+    .final-title {
+      font-size: 4rem;
+      color: #ff3366;
+      text-shadow: 0 0 30px #ff3366, 0 0 60px #ff3366;
+      text-align: center;
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    .final-subtitle {
+      font-size: 2rem;
+      color: #e2e8f0;
+      text-shadow: 0 0 20px rgba(255, 51, 102, 0.8);
+      text-align: center;
+      opacity: 0;
+      animation: fadeInUp 1s ease-out 0.5s forwards;
+    }
+
+    /* Progress bar */
+    .progress-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #ff3366, #ff6600, #ffff33, #00ff00, #00ffff, #ff00ff);
+      z-index: 1000;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: rgba(255, 255, 255, 0.3);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* Replay button */
+    .replay-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      background: #ff3366;
+      color: #060913;
+      border: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.5s;
+    }
+
+    .replay-btn:hover {
+      background: #ff6600;
+    }
+
+    .replay-btn.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="trailer-container">
+    <!-- Scene 1: Hook (00:00 - 00:05) -->
+    <div class="scene hook-scene" id="scene-1">
+      <div class="neon-grid"></div>
+      <div class="countdown-warning">⚠ DRIFT INCOMING</div>
+      <div class="typewriter-text" id="typewriter"></div>
+      <div class="text-overlay">"The solstice is shifting… the light is unstable…"</div>
+    </div>
+
+    <!-- Scene 2: Core Verb (00:05 - 00:12) -->
+    <div class="scene game-scene" id="scene-2">
+      <div class="game-canvas-wrapper">
+        <canvas id="game-canvas-2" width="640" height="640"></canvas>
+      </div>
+      <div class="scene-text">"Rotate. Redirect. Solve."</div>
+    </div>
+
+    <!-- Scene 3: Color Synthesis (00:12 - 00:20) -->
+    <div class="scene game-scene" id="scene-3">
+      <div class="game-canvas-wrapper">
+        <canvas id="game-canvas-3" width="640" height="640"></canvas>
+      </div>
+      <div class="scene-text">"Mix light. Lock the drift."</div>
+    </div>
+
+    <!-- Scene 4: Advanced Mechanics (00:20 - 00:28) -->
+    <div class="scene game-scene" id="scene-4">
+      <div class="game-canvas-wrapper">
+        <canvas id="game-canvas-4" width="640" height="640"></canvas>
+      </div>
+      <div class="scene-text">"Portals. Filters. Total mastery."</div>
+    </div>
+
+    <!-- Scene 5: Payoff (00:28 - 00:35) -->
+    <div class="scene game-scene" id="scene-5">
+      <div class="game-canvas-wrapper">
+        <canvas id="game-canvas-5" width="640" height="640"></canvas>
+      </div>
+      <div class="scene-text">"Design your own. Share the cipher."</div>
+    </div>
+
+    <!-- Scene 6: Final (00:35) -->
+    <div class="scene final-scene" id="scene-6">
+      <div class="final-title">SOLSTICE CRYPT</div>
+      <div class="final-subtitle">Decrypt the light.</div>
+    </div>
+  </div>
+
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill"></div>
+  </div>
+
+  <button class="replay-btn" id="replay-btn">↻ REPLAY</button>
+
+  <script>
+    const TRAILER_DURATION = 35000; // 35 seconds
+    const scenes = [
+      { id: 'scene-1', start: 0, end: 5000 },
+      { id: 'scene-2', start: 5000, end: 12000 },
+      { id: 'scene-3', start: 12000, end: 20000 },
+      { id: 'scene-4', start: 20000, end: 28000 },
+      { id: 'scene-5', start: 28000, end: 35000 },
+      { id: 'scene-6', start: 35000, end: 40000 }
+    ];
+
+    let startTime = null;
+    let animationFrame = null;
+    let canvasAnimations = [];
+
+    function showScene(sceneId) {
+      document.querySelectorAll('.scene').forEach(scene => {
+        scene.classList.remove('active');
+      });
+      document.getElementById(sceneId).classList.add('active');
+    }
+
+    function typeWriter(element, text, speed = 50) {
+      let i = 0;
+      element.textContent = '';
+      function type() {
+        if (i < text.length) {
+          element.textContent += text.charAt(i);
+          i++;
+          setTimeout(type, speed);
+        }
+      }
+      type();
+    }
+
+    // Simple canvas animation for game scenes
+    function initCanvasAnimation(canvasId, sceneIndex) {
+      const canvas = document.getElementById(canvasId);
+      const ctx = canvas.getContext('2d');
+      let frame = 0;
+      
+      function draw() {
+        ctx.fillStyle = '#060913';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw grid
+        ctx.strokeStyle = 'rgba(255, 51, 102, 0.2)';
+        ctx.lineWidth = 1;
+        const gridSize = 80;
+        for (let i = 0; i <= canvas.width; i += gridSize) {
+          ctx.beginPath();
+          ctx.moveTo(i, 0);
+          ctx.lineTo(i, canvas.height);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i);
+          ctx.lineTo(canvas.width, i);
+          ctx.stroke();
+        }
+        
+        // Draw different elements based on scene
+        if (sceneIndex === 1) {
+          // Scene 2: Mirror rotation
+          drawMirrorDemo(ctx, frame);
+        } else if (sceneIndex === 2) {
+          // Scene 3: Color synthesis
+          drawColorSynthesis(ctx, frame);
+        } else if (sceneIndex === 3) {
+          // Scene 4: Advanced mechanics
+          drawAdvancedMechanics(ctx, frame);
+        } else if (sceneIndex === 4) {
+          // Scene 5: Payoff
+          drawPayoff(ctx, frame);
+        }
+        
+        frame++;
+        return frame;
+      }
+      
+      return { canvas, ctx, draw, frame };
+    }
+
+    function drawMirrorDemo(ctx, frame) {
+      const centerX = 320;
+      const centerY = 320;
+      const angle = (frame * 0.02) % (Math.PI * 2);
+      
+      // Draw emitter
+      ctx.fillStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(80, 320, 20, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Draw mirror
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(angle);
+      ctx.strokeStyle = '#ff3366';
+      ctx.shadowColor = '#ff3366';
+      ctx.shadowBlur = 15;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(-30, -30);
+      ctx.lineTo(30, 30);
+      ctx.stroke();
+      ctx.restore();
+      
+      // Draw laser
+      ctx.strokeStyle = '#ffffff';
+      ctx.shadowColor = '#ffffff';
+      ctx.shadowBlur = 10;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(100, 320);
+      ctx.lineTo(centerX - 40, 320);
+      ctx.stroke();
+      
+      // Draw receiver
+      ctx.fillStyle = '#00ff00';
+      ctx.shadowColor = '#00ff00';
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.arc(560, 320, 25, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawColorSynthesis(ctx, frame) {
+      const centerX = 320;
+      const centerY = 320;
+      
+      // Draw red beam
+      ctx.strokeStyle = '#ff0000';
+      ctx.shadowColor = '#ff0000';
+      ctx.shadowBlur = 15;
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(80, 200);
+      ctx.lineTo(centerX, centerY);
+      ctx.stroke();
+      
+      // Draw blue beam
+      ctx.strokeStyle = '#0000ff';
+      ctx.shadowColor = '#0000ff';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(80, 440);
+      ctx.lineTo(centerX, centerY);
+      ctx.stroke();
+      
+      // Draw magenta result
+      ctx.strokeStyle = '#ff00ff';
+      ctx.shadowColor = '#ff00ff';
+      ctx.shadowBlur = 20;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(560, 320);
+      ctx.stroke();
+      
+      // Draw drift warning
+      if (frame % 60 < 30) {
+        ctx.fillStyle = '#ff6600';
+        ctx.font = '20px Share Tech Mono';
+        ctx.fillText('⚠ DRIFT ACTIVE', 20, 40);
+      }
+    }
+
+    function drawAdvancedMechanics(ctx, frame) {
+      // Draw portal
+      ctx.strokeStyle = '#00ffff';
+      ctx.shadowColor = '#00ffff';
+      ctx.shadowBlur = 20;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(160, 320, 30, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.arc(480, 320, 30, 0, Math.PI * 2);
+      ctx.stroke();
+      
+      // Draw beam through portal
+      ctx.strokeStyle = '#ffff00';
+      ctx.shadowColor = '#ffff00';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(80, 320);
+      ctx.lineTo(130, 320);
+      ctx.stroke();
+      
+      ctx.beginPath();
+      ctx.moveTo(510, 320);
+      ctx.lineTo(560, 320);
+      ctx.stroke();
+      
+      // Draw filter
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+      ctx.strokeStyle = '#ff0000';
+      ctx.lineWidth = 2;
+      ctx.fillRect(280, 280, 80, 80);
+      ctx.strokeRect(280, 280, 80, 80);
+    }
+
+    function drawPayoff(ctx, frame) {
+      // Draw completed grid
+      const gridSize = 6;
+      const cellSize = 80;
+      const offsetX = 80;
+      const offsetY = 80;
+      
+      for (let x = 0; x < gridSize; x++) {
+        for (let y = 0; y < gridSize; y++) {
+          const px = offsetX + x * cellSize;
+          const py = offsetY + y * cellSize;
+          
+          // Draw cell border
+          ctx.strokeStyle = 'rgba(255, 51, 102, 0.3)';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(px, py, cellSize, cellSize);
+          
+          // Draw some elements
+          if ((x + y) % 3 === 0) {
+            ctx.fillStyle = `hsl(${(frame + x * 30) % 360}, 100%, 50%)`;
+            ctx.shadowColor = ctx.fillStyle;
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(px + cellSize/2, py + cellSize/2, 15, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+      }
+      
+      // Draw share code
+      ctx.fillStyle = '#ff3366';
+      ctx.font = '16px Share Tech Mono';
+      ctx.shadowBlur = 10;
+      ctx.fillText('SHARE CODE: eyJuYW1lIjoiU29sc3RpY2UgQ3J5cHQi...', 80, 580);
+    }
+
+    function startTrailer() {
+      startTime = Date.now();
+      
+      // Initialize canvas animations
+      canvasAnimations = [
+        null, // Scene 1 has no canvas
+        initCanvasAnimation('game-canvas-2', 1),
+        initCanvasAnimation('game-canvas-3', 2),
+        initCanvasAnimation('game-canvas-4', 3),
+        initCanvasAnimation('game-canvas-5', 4),
+        null  // Scene 6 has no canvas
+      ];
+
+      // Start typewriter effect
+      typeWriter(document.getElementById('typewriter'), 'SYSTEMS COMMENCING // DRIFT INCOMING', 50);
+
+      showScene('scene-1');
+      document.getElementById('replay-btn').classList.remove('visible');
+
+      function update() {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min((elapsed / TRAILER_DURATION) * 100, 100);
+        document.getElementById('progress-fill').style.width = progress + '%';
+
+        // Find current scene
+        let currentScene = scenes[0];
+        for (const scene of scenes) {
+          if (elapsed >= scene.start && elapsed < scene.end) {
+            currentScene = scene;
+            break;
+          }
+        }
+
+        if (currentScene) {
+          showScene(currentScene.id);
+          
+          // Update canvas animation for current scene
+          const sceneIndex = scenes.indexOf(currentScene);
+          if (canvasAnimations[sceneIndex]) {
+            canvasAnimations[sceneIndex].draw();
+          }
+        }
+
+        if (elapsed < TRAILER_DURATION) {
+          animationFrame = requestAnimationFrame(update);
+        } else {
+          // Show final scene
+          showScene('scene-6');
+          document.getElementById('replay-btn').classList.add('visible');
+        }
+      }
+
+      animationFrame = requestAnimationFrame(update);
+    }
+
+    function stopTrailer() {
+      if (animationFrame) {
+        cancelAnimationFrame(animationFrame);
+      }
+    }
+
+    document.getElementById('replay-btn').addEventListener('click', () => {
+      stopTrailer();
+      startTrailer();
+    });
+
+    // Start trailer on load
+    window.addEventListener('load', startTrailer);
+  </script>
+</body>
+</html>

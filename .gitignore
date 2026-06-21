@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Production build artifacts
+# dist/ - Commented out for GitHub Pages deployment
+
+# System / IDE files
+.DS_Store
+.gemini/
+.vscode/
+.idea/
+idea
+
+# Local env files
+*.local
